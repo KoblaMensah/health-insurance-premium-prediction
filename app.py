@@ -1,11 +1,22 @@
 import streamlit as st
 import pandas as pd
 import joblib
+from pathlib import Path
 
-# Load model
-model = joblib.load("xgb_model.pkl")
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "model" / "xgb_model.pkl"
 
-st.title("🏥 Health Insurance Premium Predictor")
+try:
+    model = joblib.load(MODEL_PATH)
+except FileNotFoundError:
+    st.error(f"Model file not found at: {MODEL_PATH}\n"
+             "Make sure xgb_model.pkl is inside the 'model/' folder next to app.py.")
+    st.stop()
+except Exception as e:
+    st.error(f"Failed to load model: {e}")
+    st.stop()
+
+st.title("📊 Health Insurance Premium Predictor")
 
 # --- BMI Calculator Section ---
 with st.expander("Don't know your BMI? Calculate here!"):
